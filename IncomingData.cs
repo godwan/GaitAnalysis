@@ -13,51 +13,79 @@ namespace EcgChart
 		}
 		public static IEnumerable<SerialDataEntity> parseBytes(byte[] data)
 		{
-			int ByteLength = 10;
+			int ByteLength = 11;
 			List<string> cByte = new List<string>();
-			for (int i=0, length=data.Length; i<length; i++) 
+            int count = 0;
+			for (int i=0, length =data.Length; i<length; i++) 
 			{
-				if(data[i]==85) {
-                    if (i <= length - ByteLength && data[i + 1] == 81)
-                    {       //解析的是加速度包					
-                        if (cByte.Count == ByteLength)
+                if (count < ByteLength-1)
+                {
+                    cByte.Add(data[i].ToString());
+                    count++;
+                }
+                else
+                {
+                    cByte.Add(data[i].ToString());
+                    count++;
+                    if (int.Parse(cByte[0]) == 85 && int.Parse(cByte[1]) == 81)
+                    {
+                        if (cheakSum(cByte, ByteLength))
                         {
                             yield return parseByteBySpeed(cByte);
+                            cByte.Clear();
+                            count = 0;
                         }
-                        cByte.Clear();
+                        else {
+                            cByte.RemoveAt(0);
+                            count--;
+                        }
                     }
-                    else if (i <= length - ByteLength && data[i + 1] == 82) //解析的是角速度包
+                    else if (int.Parse(cByte[0]) == 85 && int.Parse(cByte[1]) == 82) //解析的是角速度包
                     {
-                        if (cByte.Count == ByteLength)
+                        if (cheakSum(cByte, ByteLength))
                         {
                             yield return parseByteByAngle_velocity(cByte);
+                            cByte.Clear();
+                            count = 0;
                         }
-                        cByte.Clear();
+                        else
+                        {
+                            cByte.RemoveAt(0);
+                            count--;
+                        }
                     }
-                    else if (i <= length - ByteLength && data[i + 1] == 83)// 解析的是角度包
+                    else if (int.Parse(cByte[0]) == 85 && int.Parse(cByte[1]) == 83)// 解析的是角度包
                     {
-                        if (cByte.Count == ByteLength)
+                        if (cheakSum(cByte, ByteLength))
                         {
                             yield return parseByteByAngle(cByte);
+                            cByte.Clear();
+                            count = 0;
                         }
-                        cByte.Clear();
+                        else
+                        {
+                            cByte.RemoveAt(0);
+                            count--;
+                        }
                     }
-                    
+                    else
+                    {
+                        cByte.RemoveAt(0);
+                        count--;
+                    }
                 }
-				else 
-				{
-					cByte.Add(data[i].ToString());
-				}
+                   
 			}
 		}
 
         static SerialDataEntity parseByteBySpeed(List<string> cByte)
         {
             SerialDataEntity temp = new SerialDataEntity();
-            double wx = (double.Parse(cByte[2]) * 256 + double.Parse(cByte[1])) / 32768 * 16 * G; // 度/s   x方向的加速度
-            double wy = (double.Parse(cByte[4]) * 256 + double.Parse(cByte[3])) / 32768 * 16 * G; // 度/s   y方向的加速度
-            double wz = (double.Parse(cByte[6]) * 256 + double.Parse(cByte[5])) / 32768 * 16 * G; // 度/s   z方向的加速度
-            double temperture = (double.Parse(cByte[8]) * 256 + double.Parse(cByte[7])) / 340 + 36.53; //温度  摄氏度
+            double wx = (double.Parse(cByte[3]) * 256 + double.Parse(cByte[2])) / 32768 * 16;// * G; // m/s^2   x方向的加速度
+            double wy = (double.Parse(cByte[5]) * 256 + double.Parse(cByte[4])) / 32768 * 16;// * G; // m/s^2   y方向的加速度
+            double wz = (double.Parse(cByte[7]) * 256 + double.Parse(cByte[6])) / 32768 * 16;// * G; // m/s^2  z方向的加速度
+            double temperture = (double.Parse(cByte[9]) * 256 + double.Parse(cByte[8])) / 340 + 36.53; //温度  摄氏度
+            Console.WriteLine("加速度：x方向加速度",wx,"y方向加速度", wy, "z方向加速度", wz);
 
             temp.setNum(1);
             temp.setX(wx);
@@ -70,11 +98,11 @@ namespace EcgChart
         static SerialDataEntity parseByteByAngle_velocity(List<string> cByte)
         {
             SerialDataEntity temp = new SerialDataEntity();
-            double wx = (double.Parse(cByte[2]) * 256 + double.Parse(cByte[1])) / 32768 * 2000; // 度/s   x方向的角速度
-            double wy = (double.Parse(cByte[4]) * 256 + double.Parse(cByte[3])) / 32768 * 2000; // 度/s   y方向的角速度
-            double wz = (double.Parse(cByte[6]) * 256 + double.Parse(cByte[5])) / 32768 * 2000; // 度/s   z方向的角速度
-            double temperture = (double.Parse(cByte[8]) * 256 + double.Parse(cByte[7])) / 340 + 36.53; //温度  摄氏度
-
+            double wx = (double.Parse(cByte[3]) * 256 + double.Parse(cByte[2])) / 32768 * 2000; // 度/s   x方向的角速度
+            double wy = (double.Parse(cByte[5]) * 256 + double.Parse(cByte[4])) / 32768 * 2000; // 度/s   y方向的角速度
+            double wz = (double.Parse(cByte[7]) * 256 + double.Parse(cByte[6])) / 32768 * 2000; // 度/s   z方向的角速度
+            double temperture = (double.Parse(cByte[9]) * 256 + double.Parse(cByte[8])) / 340 + 36.53; //温度  摄氏度
+            //Console.WriteLine("角速度：x方向角速度", wx, "y方向角速度", wy, "z方向角速度", wz);
             temp.setNum(2);
             temp.setX(wx);
             temp.setY(wy);
@@ -85,10 +113,10 @@ namespace EcgChart
 
         static SerialDataEntity parseByteByAngle(List<string> cByte) {
             SerialDataEntity temp = new SerialDataEntity();
-            double wx = (double.Parse(cByte[2]) * 256 + double.Parse(cByte[1])) / 32768 * 180; // 度  x方向的角度
-            double wy = (double.Parse(cByte[4]) * 256 + double.Parse(cByte[3])) / 32768 * 180; // 度   y方向的角度
-            double wz = (double.Parse(cByte[6]) * 256 + double.Parse(cByte[5])) / 32768 * 180; // 度   z方向的角度
-            double temperture = (double.Parse(cByte[8]) * 256 + double.Parse(cByte[7])) / 340 +36.53; //温度  摄氏度
+            double wx = (double.Parse(cByte[3]) * 256 + double.Parse(cByte[2])) / 32768 * 180; // 度  x方向的角度
+            double wy = (double.Parse(cByte[5]) * 256 + double.Parse(cByte[4])) / 32768 * 180; // 度   y方向的角度
+            double wz = (double.Parse(cByte[7]) * 256 + double.Parse(cByte[6])) / 32768 * 180; // 度   z方向的角度
+            double temperture = (double.Parse(cByte[9]) * 256 + double.Parse(cByte[8])) / 340 +36.53; //温度  摄氏度
 
             temp.setNum(3);
             temp.setX(wx);
@@ -98,6 +126,22 @@ namespace EcgChart
             return temp;
         }
 
+        /**
+         * 校验和 
+         */
+        static bool cheakSum(List<string> cByte,int len) {
+            int sum = 0;
+            bool flag = false;
+            for(int i=0;i < len-1; i++){
+                sum += int.Parse(cByte[i]);
+            }
+
+            if (sum % 256 == int.Parse(cByte[len - 1]))
+            {
+                flag =  true;
+            }
+            return flag;
+        }
 
         static double parseByte(List<string> cByte)
 		{
