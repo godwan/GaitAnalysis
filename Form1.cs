@@ -145,8 +145,8 @@ namespace EcgChart
                     case 1:
                         //加速度
                         var x2 = dspEngine.bcgFilter(v.getX());
-                        //var y2 = dspEngine.bcgFilter(v.getY());
-                        //var z2 = dspEngine.bcgFilter(v.getZ());
+                        var y2 = dspEngine.bcgFilter(v.getY());
+                        var z2 = dspEngine.bcgFilter(v.getZ());
 
                         
 
@@ -157,8 +157,8 @@ namespace EcgChart
                             type1Chart1.AddPoint(v.getZ(), 2);
 
                             type1Chart2.AddPoint(x2, 0);
-                            //type1Chart2.AddPoint(y2, 1);
-                            //type1Chart2.AddPoint(z2, 2);
+                            type1Chart2.AddPoint(y2, 1);
+                            type1Chart2.AddPoint(z2, 2);
                         }
 
                         
