@@ -13,7 +13,7 @@ namespace EcgChart
 		GraphPane pane;
 		const string chartTitle = "ECG";
 		int pointCount;
-		
+        Dictionary<int, int> _dicPointCount = new Dictionary<int, int>();
 		
 		public MyChart(ZedGraphControl g)
 		{
@@ -21,7 +21,10 @@ namespace EcgChart
 			pane = graph.GraphPane; 
 			pointCount = 0; 
 			initGraph();
-		}
+            _dicPointCount.Add(0, 0);
+            _dicPointCount.Add(1, 0);
+            _dicPointCount.Add(2, 0);
+        }
 		void initGraph(){
 			pane.CurveList.Clear();
 			pane.Title.Text = chartTitle;
@@ -74,7 +77,7 @@ namespace EcgChart
                 pane.CurveList[curveIndex].RemovePoint(0);
                 pane.XAxis.Scale.Min = pane.CurveList[curveIndex].Points[0].X;
             }
-            var maxIndex = pointCount++;
+            var maxIndex = _dicPointCount[curveIndex]++;
             pane.CurveList[curveIndex].AddPoint(maxIndex,val);
             pane.XAxis.Scale.Max = maxIndex;
             Update();

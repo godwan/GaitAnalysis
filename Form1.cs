@@ -26,7 +26,11 @@ namespace EcgChart
 
         DspEngine dspEngine;
         ComPort myPort;
-        
+
+        static int counter1 = 0;
+        static int counter2 = 0;
+        static int counter3 = 0;
+        static int step = 5;  //修改采样率
         ///// <summary>
         ///// 加速度表1数据
         ///// </summary>
@@ -140,35 +144,49 @@ namespace EcgChart
                 {
                     case 1:
                         //加速度
-                        type1Chart1.AddPoint(v.getX(), 0);
-                        type1Chart1.AddPoint(v.getY(), 1);
-                        type1Chart1.AddPoint(v.getZ(), 2);
-
-                        //var x2 = dspEngine.bcgFilter(v.getX());
+                        var x2 = dspEngine.bcgFilter(v.getX());
                         //var y2 = dspEngine.bcgFilter(v.getY());
                         //var z2 = dspEngine.bcgFilter(v.getZ());
 
-                        //type1Chart2.AddPoint(x2, 0);
-                        //type1Chart2.AddPoint(y2, 1);
-                        //type1Chart2.AddPoint(z2, 2);
+                        
+
+                        if(++counter1== step) {
+                            counter1 = 0;
+                            type1Chart1.AddPoint(v.getX(), 0);
+                            type1Chart1.AddPoint(v.getY(), 1);
+                            type1Chart1.AddPoint(v.getZ(), 2);
+
+                            type1Chart2.AddPoint(x2, 0);
+                            //type1Chart2.AddPoint(y2, 1);
+                            //type1Chart2.AddPoint(z2, 2);
+                        }
+
+                        
 
                         break;
                     case 2:
                         //角速度
-                        type2Chart1.AddPoint(v.getX(), 0);
-                        type2Chart1.AddPoint(v.getY(), 1);
-                        type2Chart1.AddPoint(v.getZ(), 2);
+                        if (++counter2 == step)
+                        {
+                            counter2 = 0;
+                            type2Chart1.AddPoint(v.getX(), 0);
+                            type2Chart1.AddPoint(v.getY(), 1);
+                            type2Chart1.AddPoint(v.getZ(), 2);
 
+                        }
                         //type2Chart2.AddPoint(x2, 0);
                         //type2Chart2.AddPoint(y2, 1);
                         //type2Chart2.AddPoint(z2, 2);
                         break;
                     case 3:
                         //角度
-                        type3Chart1.AddPoint(v.getX(), 0);
-                        type3Chart1.AddPoint(v.getY(), 1);
-                        type3Chart1.AddPoint(v.getZ(), 2);
-
+                        if (++counter3 == step)
+                        {
+                            counter3 = 0;
+                            type3Chart1.AddPoint(v.getX(), 0);
+                            type3Chart1.AddPoint(v.getY(), 1);
+                            type3Chart1.AddPoint(v.getZ(), 2);
+                        }
                         //type3Chart2.AddPoint(x2, 0);
                         //type3Chart2.AddPoint(y2, 1);
                         //type3Chart2.AddPoint(z2, 2);

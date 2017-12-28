@@ -81,11 +81,12 @@ namespace EcgChart
         static SerialDataEntity parseByteBySpeed(List<string> cByte)
         {
             SerialDataEntity temp = new SerialDataEntity();
-            double wx = (double.Parse(cByte[3]) * 256 + double.Parse(cByte[2])) / 32768 * 16;// * G; // m/s^2   x方向的加速度
-            double wy = (double.Parse(cByte[5]) * 256 + double.Parse(cByte[4])) / 32768 * 16;// * G; // m/s^2   y方向的加速度
-            double wz = (double.Parse(cByte[7]) * 256 + double.Parse(cByte[6])) / 32768 * 16;// * G; // m/s^2  z方向的加速度
-            double temperture = (double.Parse(cByte[9]) * 256 + double.Parse(cByte[8])) / 340 + 36.53; //温度  摄氏度
-            Console.WriteLine("加速度：x方向加速度",wx,"y方向加速度", wy, "z方向加速度", wz);
+
+             double wx = makeSign(int.Parse(cByte[3]), int.Parse(cByte[2])) / 32768 * 16;// * G; // m/s^2   x方向的加速度
+            double wy = makeSign(int.Parse(cByte[5]), int.Parse(cByte[4])) / 32768 * 16;// * G; // m/s^2   y方向的加速度
+            double wz = makeSign(int.Parse(cByte[7]), int.Parse(cByte[6])) / 32768 * 16;// * G; // m/s^2  z方向的加速度
+            double temperture = makeSign(int.Parse(cByte[9]), int.Parse(cByte[8])) / 340 + 36.53; //温度  摄氏度
+            Console.WriteLine("加速度：x方向"+wx.ToString()+"  y方向"+ wy.ToString()+"  z方向"+ wz.ToString());
 
             temp.setNum(1);
             temp.setX(wx);
@@ -95,13 +96,16 @@ namespace EcgChart
             return temp;
         }
 
+
+
+
         static SerialDataEntity parseByteByAngle_velocity(List<string> cByte)
         {
             SerialDataEntity temp = new SerialDataEntity();
-            double wx = (double.Parse(cByte[3]) * 256 + double.Parse(cByte[2])) / 32768 * 2000; // 度/s   x方向的角速度
-            double wy = (double.Parse(cByte[5]) * 256 + double.Parse(cByte[4])) / 32768 * 2000; // 度/s   y方向的角速度
-            double wz = (double.Parse(cByte[7]) * 256 + double.Parse(cByte[6])) / 32768 * 2000; // 度/s   z方向的角速度
-            double temperture = (double.Parse(cByte[9]) * 256 + double.Parse(cByte[8])) / 340 + 36.53; //温度  摄氏度
+            double wx = makeSign(int.Parse(cByte[3]), int.Parse(cByte[2])) / 32768 * 2000; // 度/s   x方向的角速度
+            double wy = makeSign(int.Parse(cByte[5]), int.Parse(cByte[4])) / 32768 * 2000; // 度/s   y方向的角速度
+            double wz = makeSign(int.Parse(cByte[7]), int.Parse(cByte[6])) / 32768 * 2000; // 度/s   z方向的角速度
+            double temperture = makeSign(int.Parse(cByte[9]), int.Parse(cByte[8])) / 340 + 36.53; //温度  摄氏度
             //Console.WriteLine("角速度：x方向角速度", wx, "y方向角速度", wy, "z方向角速度", wz);
             temp.setNum(2);
             temp.setX(wx);
@@ -113,10 +117,10 @@ namespace EcgChart
 
         static SerialDataEntity parseByteByAngle(List<string> cByte) {
             SerialDataEntity temp = new SerialDataEntity();
-            double wx = (double.Parse(cByte[3]) * 256 + double.Parse(cByte[2])) / 32768 * 180; // 度  x方向的角度
-            double wy = (double.Parse(cByte[5]) * 256 + double.Parse(cByte[4])) / 32768 * 180; // 度   y方向的角度
-            double wz = (double.Parse(cByte[7]) * 256 + double.Parse(cByte[6])) / 32768 * 180; // 度   z方向的角度
-            double temperture = (double.Parse(cByte[9]) * 256 + double.Parse(cByte[8])) / 340 +36.53; //温度  摄氏度
+            double wx = makeSign(int.Parse(cByte[3]), int.Parse(cByte[2])) / 32768 * 180; // 度  x方向的角度
+            double wy = makeSign(int.Parse(cByte[5]), int.Parse(cByte[4])) / 32768 * 180; // 度   y方向的角度
+            double wz = makeSign(int.Parse(cByte[7]), int.Parse(cByte[6])) / 32768 * 180; // 度   z方向的角度
+            double temperture = makeSign(int.Parse(cByte[9]), int.Parse(cByte[8])) / 340 +36.53; //温度  摄氏度
 
             temp.setNum(3);
             temp.setX(wx);
@@ -124,6 +128,24 @@ namespace EcgChart
             temp.setZ(wz);
             temp.setTem(temperture);
             return temp;
+        }
+        /**
+         * 求数据的符号位
+         */
+        static double makeSign(int highByte, int lowByte)
+        {
+            double outD = 0;
+            if (highByte > 127) // 取补码
+            {
+                //outD = -1 * (127 - (highByte - 128)) * 256 + 255 - lowByte + 1;
+                //outD = -1 * (255 - highByte) * 256 + 256 - lowByte;
+                outD = -1 * (254 - highByte) * 256 - lowByte;
+            }
+            else//整数
+            {
+                outD = (highByte * 256 + lowByte);
+            }
+            return outD;
         }
 
         /**
