@@ -24,12 +24,16 @@ namespace EcgChart
         MyChart type3Chart1;
         MyChart type3Chart2;
 
+        MyChart type4Chart1;
+        MyChart type4Chart2;
+
         DspEngine dspEngine;
         ComPort myPort;
 
         static int counter1 = 0;
         static int counter2 = 0;
         static int counter3 = 0;
+        static int counter4 = 0;
         static int step = 1;  //修改采样率
         ///// <summary>
         ///// 加速度表1数据
@@ -206,6 +210,25 @@ namespace EcgChart
                         //type3Chart2.AddPoint(y2, 1);
                         //type3Chart2.AddPoint(z2, 2);
                         break;
+                    case 4:
+                        //磁场
+                        if (++counter4 == step)
+                        {
+                            counter4 = 0;
+                            type4Chart1.AddPoint(v.getX(), 0);
+                            type4Chart1.AddPoint(v.getY(), 1);
+                            type4Chart1.AddPoint(v.getZ(), 2);
+                        }
+
+                        //values.Add(v.getX());
+                        //values.Add(v.getY());
+                        //values.Add(v.getZ());
+                        //values.Add(v.getTem());
+
+                        //type4Chart2.AddPoint(x2, 0);
+                        //type4Chart2.AddPoint(y2, 1);
+                        //type4Chart2.AddPoint(z2, 2);
+                        break;
                     default:
                         break;
                             
@@ -269,6 +292,9 @@ namespace EcgChart
 
             type3Chart1 = new MyChart(zedGraphControl6);
             type3Chart2 = new MyChart(zedGraphControl5);
+
+            type4Chart1 = new MyChart(zedGraphControl7);
+            type4Chart2 = new MyChart(zedGraphControl8);
 
             dspEngine = new DspEngine();
             counter = 0;

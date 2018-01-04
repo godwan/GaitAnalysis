@@ -271,7 +271,7 @@ namespace EcgChart
             double wz = makeSign(int.Parse(cByte[7]), int.Parse(cByte[6])); //  z轴的磁场
             double temperture = makeSign(int.Parse(cByte[9]), int.Parse(cByte[8])) / 100; //温度  摄氏度
 
-            temp.setNum(3);
+            temp.setNum(4);
             temp.setX(wx);
             temp.setY(wy);
             temp.setZ(wz);
