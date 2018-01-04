@@ -8,7 +8,7 @@ namespace EcgChart
 	public class ComPort
 	{
 		const string defaultPort = "com2";
-		static int baud = 115200;
+		static int baud = 9600;
 		public SerialPort _sPort;
 		public delegate void PassControl(object sender);
 	    // Create instance (null)

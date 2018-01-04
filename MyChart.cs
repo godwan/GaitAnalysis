@@ -11,7 +11,7 @@ namespace EcgChart
 	{
 		ZedGraphControl graph;
 		GraphPane pane;
-		const string chartTitle = "ECG";
+		const string chartTitle = "原始数据";
 		int pointCount;
         Dictionary<int, int> _dicPointCount = new Dictionary<int, int>();
 		

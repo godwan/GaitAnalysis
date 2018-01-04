@@ -30,7 +30,7 @@ namespace EcgChart
         static int counter1 = 0;
         static int counter2 = 0;
         static int counter3 = 0;
-        static int step = 5;  //修改采样率
+        static int step = 1;  //修改采样率
         ///// <summary>
         ///// 加速度表1数据
         ///// </summary>
@@ -148,9 +148,13 @@ namespace EcgChart
                         var y2 = dspEngine.bcgFilter(v.getY());
                         var z2 = dspEngine.bcgFilter(v.getZ());
 
-                        
+                        //values.Add(v.getX());
+                        //values.Add(v.getY());
+                        //values.Add(v.getZ());
 
-                        if(++counter1== step) {
+
+
+                        if (++counter1== step) {
                             counter1 = 0;
                             type1Chart1.AddPoint(v.getX(), 0);
                             type1Chart1.AddPoint(v.getY(), 1);
@@ -174,6 +178,11 @@ namespace EcgChart
                             type2Chart1.AddPoint(v.getZ(), 2);
 
                         }
+
+                        //values.Add(v.getX());
+                        //values.Add(v.getY());
+                        //values.Add(v.getZ());
+
                         //type2Chart2.AddPoint(x2, 0);
                         //type2Chart2.AddPoint(y2, 1);
                         //type2Chart2.AddPoint(z2, 2);
@@ -187,6 +196,12 @@ namespace EcgChart
                             type3Chart1.AddPoint(v.getY(), 1);
                             type3Chart1.AddPoint(v.getZ(), 2);
                         }
+
+                        //values.Add(v.getX());
+                        //values.Add(v.getY());
+                        //values.Add(v.getZ());
+                        //values.Add(v.getTem());
+
                         //type3Chart2.AddPoint(x2, 0);
                         //type3Chart2.AddPoint(y2, 1);
                         //type3Chart2.AddPoint(z2, 2);
@@ -197,8 +212,8 @@ namespace EcgChart
                 }
 
             }
-			//allValues.AddRange(values);
-		}
+            //allValues.AddRange(values);
+        }
 
 		void Form1_FormClosing(object sender, FormClosingEventArgs e)
 		{
@@ -213,7 +228,7 @@ namespace EcgChart
 		}
 		SerialPort initPort(string portName)
 		{
-            int baud = 115200;//57600;
+            int baud = 9600;// 115200;//57600;
 			try {
 				SerialPort port = new SerialPort(portName,baud);
 				port.DataReceived += sp_DataReceived;
